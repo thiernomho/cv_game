@@ -43,9 +43,21 @@ class Club
      */
     private $championnat;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\MatchFootBall", mappedBy="equipeDomicile")
+     */
+    private $matchDomicile;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\MatchFootBall", mappedBy="equipeExterne")
+     */
+    private $clubExtern;
+
     public function __construct()
     {
         $this->championnat = new ArrayCollection();
+        $this->matchDomicile = new ArrayCollection();
+        $this->clubExtern = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -122,6 +134,68 @@ class Club
     {
         if ($this->championnat->contains($championnat)) {
             $this->championnat->removeElement($championnat);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MatchFootBall[]
+     */
+    public function getMatchDomicile(): Collection
+    {
+        return $this->matchDomicile;
+    }
+
+    public function addMatchDomicile(MatchFootBall $matchDomicile): self
+    {
+        if (!$this->matchDomicile->contains($matchDomicile)) {
+            $this->matchDomicile[] = $matchDomicile;
+            $matchDomicile->setEquipeDomicile($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMatchDomicile(MatchFootBall $matchDomicile): self
+    {
+        if ($this->matchDomicile->contains($matchDomicile)) {
+            $this->matchDomicile->removeElement($matchDomicile);
+            // set the owning side to null (unless already changed)
+            if ($matchDomicile->getEquipeDomicile() === $this) {
+                $matchDomicile->setEquipeDomicile(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MatchFootBall[]
+     */
+    public function getClubExtern(): Collection
+    {
+        return $this->clubExtern;
+    }
+
+    public function addClubExtern(MatchFootBall $clubExtern): self
+    {
+        if (!$this->clubExtern->contains($clubExtern)) {
+            $this->clubExtern[] = $clubExtern;
+            $clubExtern->setEquipeExterne($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClubExtern(MatchFootBall $clubExtern): self
+    {
+        if ($this->clubExtern->contains($clubExtern)) {
+            $this->clubExtern->removeElement($clubExtern);
+            // set the owning side to null (unless already changed)
+            if ($clubExtern->getEquipeExterne() === $this) {
+                $clubExtern->setEquipeExterne(null);
+            }
         }
 
         return $this;

@@ -43,9 +43,15 @@ class Championnat
      */
     private $clubs;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\MatchFootBall", mappedBy="championat")
+     */
+    private $matches;
+
     public function __construct()
     {
         $this->clubs = new ArrayCollection();
+        $this->matches = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +130,37 @@ class Championnat
         if ($this->clubs->contains($club)) {
             $this->clubs->removeElement($club);
             $club->removeChampionnat($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MatchFootBall[]
+     */
+    public function getMatches(): Collection
+    {
+        return $this->matches;
+    }
+
+    public function addMatch(MatchFootBall $match): self
+    {
+        if (!$this->matches->contains($match)) {
+            $this->matches[] = $match;
+            $match->setChampionat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMatch(MatchFootBall $match): self
+    {
+        if ($this->matches->contains($match)) {
+            $this->matches->removeElement($match);
+            // set the owning side to null (unless already changed)
+            if ($match->getChampionat() === $this) {
+                $match->setChampionat(null);
+            }
         }
 
         return $this;
